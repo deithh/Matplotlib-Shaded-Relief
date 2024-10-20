@@ -114,10 +114,8 @@ class HSV(Vectorizible3):
             self.v = 0
 
     def light_up(self, light: float) -> None:
-        if self.s<light:
-            self.s = 0
-        else:
-            self.s-=light
+        self.s = max(self.s - light, 0)
+
     
     def toRGB(self) -> RGB:
         converted = RGB()

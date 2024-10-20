@@ -49,14 +49,26 @@ def process_lights(data: np.ndarray, light_pos: np.ndarray, dist: float) -> Tupl
             bv = np.array([-dist, 0, bz])
 
             normal = np.cross(av - ov, bv - ov)
-            light = calc_light_vector(ov, light_pos)
+
+            point = np.array([dist * y, dist * x, h])
+            light = calc_light_vector(point, light_pos)
 
             thh = sum(normal * light)/(module(normal)*module(light))
 
-            print(normal)
             shades[y, x] = 1-np.arccos(thh)/np.pi
-            lights[y, x] = 0
- 
+            lights[y, x] = np.arccos(thh)/np.pi
+    
+
+    adjust_shades = interp1d([shades.min(), shades.max()], [0, SHADE_INTENSITY])
+    shades = adjust_shades(shades)
+
+
+    adjust_lights = interp1d([lights.min(), lights.max()], [0, LIGHT_INTENSITY])
+    lights = adjust_lights(lights)
+
+    plt.imshow(lights)
+
+    plt.show()
 
     return shades, lights
 
@@ -88,27 +100,19 @@ def process_image(data: np.ndarray, gradient_func: Callable[[float, float, float
     cmap = process_cmap(data, gradient_func)
     shades, lights = process_lights(data, light_pos, dist)
 
-    adjust_shades = interp1d([shades.min(), shades.max()], [0, SHADE_INTENSITY])
-    shades = adjust_shades(shades)
-
-    adjust_lights = interp1d([lights.min(), lights.max()], [0, LIGHT_INTENSITY])
-    lights = adjust_lights(lights)
-
     image = merge_image(shades, lights, cmap)
-
-    
 
     return image
 
 SHADE_INTENSITY = .6
-LIGHT_INTENSITY = 0
-LIGHT_POS = np.array([-100, -100, 10000])
+LIGHT_INTENSITY = .1
+LIGHT_POS = np.array([0, 0, 10000])
 
 def main() -> None:
 
     dist, img = read_dem("z2/big.dem")
     img = img[:150, :150]
-    image = process_image(img, gradient, LIGHT_POS, dist)
+    image = process_image(img, gradient, LIGHT_POS, dist/5)
     plt.imshow(image)
     plt.show()
 
