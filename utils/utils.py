@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Iterable, Protocol
 from math import floor
-from numpy import ndarray, array, zeros, linspace, isclose
+from numpy import ndarray, array
 
 class Vectorizible3(Protocol):
     def vectorize3(self) -> ndarray:
@@ -115,6 +115,7 @@ class HSV(Vectorizible3):
 
     def light_up(self, light: float) -> None:
         self.s = max(self.s - light, 0)
+        self.v = min(1, self.v+light)
 
     
     def toRGB(self) -> RGB:
