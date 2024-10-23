@@ -1,6 +1,7 @@
 # README
 
 ## Shaded relief
-![target](gradients.png)  
-## Gradients
+![target](dem.png)
 ![result](shaded_relief.png)  
+## Gradients
+![target](gradients.png)  
