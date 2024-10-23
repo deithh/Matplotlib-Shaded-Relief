@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from matplotlib import rc, rcParams
 import numpy as np
 
+SAVE_PATH = "gradients.png"
+
 def enable_tex() -> None:
     #set non-gui backend (problems with tex on default)
     rcParams["backend"] = "ps"
@@ -171,7 +173,7 @@ def main() -> None:
     )
 
     fig = create_color_gradients(gradients, size)
-    save_fig(fig, "gradients.pdf")
+    save_fig(fig, SAVE_PATH)
 
 if __name__ == "__main__":
     main()

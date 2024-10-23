@@ -10,6 +10,8 @@ LIGHT_TRUNC = .55
 BASE_V = .95
 LIGHT_DIR = [60, 150]
 
+PATH = "big.dem"
+SAVE_PATH = "shaded_relief.png"
 
 def read_dem(path: str) -> Tuple[int, np.ndarray]:
     with open(path) as file:
@@ -79,12 +81,6 @@ def process_lights(data: np.ndarray, light_pos: np.ndarray, dist: float) -> Tupl
             if lights[y, x] < LIGHT_TRUNC*lm:
                 lights[y, x] = 0
 
-    plt.imshow(lights)
-
-    plt.show()
-    plt.imshow(shades)
-
-    plt.show()
 
     return shades, lights
 
@@ -133,11 +129,28 @@ def light_source(altdeg: float, azdeg: float):
     ])
 
 
+def prepare_axes()-> plt.axes:
+    axes = plt.subplot(1, 1, 1)
+    sec_xaxis = axes.secondary_xaxis('top')
+    sec_xaxis.tick_params(direction = 'in')
+    sec_xaxis.set_xticklabels([])
+    sec_yaxis = axes.secondary_yaxis('right')
+    sec_yaxis.tick_params(direction = 'in')
+    sec_yaxis.set_yticklabels([])
+
+    return axes
+
+
 def main() -> None:
-    dist, img = read_dem("z2/big.dem")
+
+
+    dist, img = read_dem(PATH)
     image = process_image(img, gradient, light_source(*LIGHT_DIR), dist)
-    plt.imshow(image)
-    plt.show()
+
+    axes = prepare_axes()
+    axes.imshow(image)
+
+    plt.savefig(SAVE_PATH)
 
 
 if __name__ == "__main__":
